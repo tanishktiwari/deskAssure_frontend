@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+
+.sidebar {
+  width: 200px; /* Set the expanded width permanently */
+  font-family: 'Quicksand', sans-serif;
+  z-index: 50; /* Ensure the sidebar is above other elements */
+  transition: width 0.3s; /* Optional: smooth transition */
+}

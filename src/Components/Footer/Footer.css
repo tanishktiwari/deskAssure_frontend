@@ -1,0 +1,151 @@
+/* General Styles */
+.footer-container {
+  background-color: #222222;
+  color: #a7a7a7;
+  padding: 25px 45px;
+  font-family: 'Quicksand', sans-serif; /* Ensure this matches your Tailwind configuration */
+  position: relative; /* Remove fixed positioning */
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Include padding and border in width and height calculations */
+  bottom: -532px;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+}
+
+.footer-col {
+  display: flex;
+  padding-left: 10%;
+  align-items: center;
+}
+
+.footer-col-right {
+  text-align: right;
+}
+
+.contact-info {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  line-height: 27px;
+  letter-spacing: 0em;
+  font-size: 18px;
+}
+
+.contact-icon {
+  height: 24px;
+  width: 24px;
+  margin-right: 8px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.mail-icon {
+  background-image: url('../../../public/mail.png');
+}
+
+.call-icon {
+  background-image: url('../../../public/call.png');
+}
+
+.footer-links-row {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #FFFFFF29;
+  margin-left: 5%;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 10%;
+}
+
+.footer-link {
+  color: #FFFFFF80;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.footer-link:hover {
+  color: #FFFFFF;
+}
+
+.footer-copyright {
+  color: #FFFFFF80;
+}
+
+/* Responsive Styles */
+
+/* Tablet devices (768px and below) */
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 20px;
+  }
+  
+  .footer-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-col-right {
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-link {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .footer-copyright {
+    margin-top: 15px;
+  }
+}
+
+/* Mobile devices (480px and below) */
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 15px;
+  }
+
+  .footer-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-col-right {
+    text-align: left;
+    margin-top: 15px;
+  }
+
+  .contact-info {
+    font-size: 16px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 43px;
+  }
+
+  .footer-link {
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
+
+  .footer-copyright {
+    margin-top: 20px;
+    text-align: left;
+  }
+}

@@ -1,0 +1,9 @@
+input#consent-checkbox {
+    width: 50px;
+}
+.country-code {
+    height: 45px;
+    z-index: 1;
+    left: 3px;
+    position: relative;
+}

@@ -1,6 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from React Router
-import { FaEnvelope, FaPhone } from 'react-icons/fa'; // Importing icons for email and phone
+import React, { useEffect, useState, useRef } from 'react'; // Add useRef here
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const NavbarAdmin = () => {
   const [isBoxOpen, setIsBoxOpen] = useState(false);
@@ -30,47 +33,57 @@ const NavbarAdmin = () => {
   };
 
   return (
-    <nav className="bg-custom-blue1 text-gray-200 py-4 px-6">
-      <div className="flex justify-between items-center">
-        <div className="logo">
-        </div>
-        <div className="relative">
-          <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
-            <div className="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center text-white mr-2">
-              <span className="font-bold">S</span> {/* Placeholder for user initials */}
-            </div>
-            <span className="text-gray-200">Profile</span>
-            <svg
-              className="ml-1"
-              width="10"
-              height="7"
-              viewBox="0 0 10 7"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8.825 0.158203L5 3.97487L1.175 0.158203L0 1.3332L5 6.3332L10 1.3332L8.825 0.158203Z"
-                fill="#545454"
-              ></path>
-            </svg>
+    <nav className="bg-custom-blue w-full fixed top-0 left-0 navbar">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 h-16">
+        <div className="relative flex items-center justify-between h-full">
+          {/* Logo */}
+          <div className="flex flex-shrink-0 items-center">
+            <div className="logo"></div>
           </div>
-
-          {isBoxOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg" ref={dropdownRef}>
-              <div className="border-t border-gray-200">
-                <ul className="py-1">
-                  <li onClick={handleLogout}>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition duration-200"
-                    >
-                      Logout
-                    </a>
-                  </li>
-                </ul>
+          {/* Icons and Profile Dropdown */}
+          <div className="flex items-center space-x-4">
+            {/* Add icon */}
+            <button 
+              className="bg-green-500 text-white hover:bg-green-600 p-2 w-10 h-10 flex items-center justify-center rounded-md">
+              <FontAwesomeIcon icon={faPlus} className="text-2xl" />
+            </button>
+            {/* Bell icon */}
+            <button className="notification-button">
+              <img 
+                src="/bell.png" // Default white icon
+                alt="Notification Bell" 
+                className="icon" 
+              />
+            </button>
+            {/* Settings icon */}
+            <button className="settings-button">
+              <img 
+                src="/settings.png" // Default white icon
+                alt="Settings" 
+                className="settings" 
+              />
+            </button>
+            {/* Profile dropdown */}
+            <Menu as="div" className="relative">
+              <div>
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <span className="sr-only">Open user menu</span>
+                  {/* New Profile Icon */}
+                  <div className="h-9 w-9 bg-yellow-200 rounded-full flex justify-center items-center text-yellow-500 text-2xl font-mono">AD</div>
+                </MenuButton>
               </div>
-            </div>
-          )}
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                <MenuItem>
+                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
+                    Sign out
+                  </a>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+          </div>
         </div>
       </div>
     </nav>

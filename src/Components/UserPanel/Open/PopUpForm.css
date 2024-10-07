@@ -1,0 +1,14 @@
+.ticket {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 0;
+    margin-top: 0;
+    margin-left: 0.5rem; /* 2 units (0.5rem = 8px) */
+    font-size: 12px; /* Corresponds to text-xs */
+    background-image: url('../../../../public/ticket.png'); /* Your image URL */
+    background-size: 15px; /* Adjust as needed */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: left center; /* Position the image */
+    padding-left: 25px; /* Space for the image */
+    margin-left: 200px;
+}

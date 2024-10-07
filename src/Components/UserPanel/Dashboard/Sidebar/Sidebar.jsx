@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HomeIcon, TicketIcon, FolderOpenIcon, FolderIcon, DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import './Sidebar.css'; // For custom font
 
 const Sidebar = () => {
@@ -31,57 +30,106 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="sidebar bg-custom-blue1 text-white fixed top-0 left-0 h-screen ">
-      <ul className="sidebar-menu flex flex-col mt-8 space-y-4 pt-12">
+    <div className="sidebar bg-custom-blue1 text-white fixed top-0 left-0 h-screen w-28"> {/* Increased width here */}
+      <ul className="sidebar-menu flex flex-col mt-8 space-y-4 pt-12 items-center"> {/* Center items */}
         {/* Home Item */}
         <li
-          className={`p-4 cursor-pointer flex items-center 
-            ${activeItem === 'Home' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
-          onClick={() => handleNavigation('Home')}
-        >
-          <HomeIcon className="h-12 w-12" />
-          <span className="ml-4">Dashboard</span>
-        </li>
+  className={`p-2 cursor-pointer flex flex-col items-center 
+    ${activeItem === 'Home' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
+  onClick={() => handleNavigation('Home')}
+>
+  <img 
+    src="/dashboard.png" 
+    alt="Dashboard Icon" 
+    style={{ height: '1.625rem', width: '1.625rem' }} 
+    className='dashboard-logo' // Updated class name
+  />
+  <span className="mt-1 text-sm">Dashboard</span>
+</li>
+
+
 
         {/* Create Ticket Item */}
         <li
-          className={`p-4 cursor-pointer flex items-center 
+          className={`p-2 cursor-pointer flex flex-col items-center 
             ${activeItem === 'Create Ticket' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
           onClick={() => handleNavigation('Create Ticket')}
         >
-          <TicketIcon className="h-12 w-12" />
-          <span className="ml-4">Create Ticket</span>
+          <img 
+            src="/add.png" // Update the path as necessary
+            alt="Create Ticket Icon" 
+            style={{ height: '1.625rem', width: '1.625rem' }} 
+            className='add-ticket-icon' // Updated class name to match CSS
+          />
+          
+          <span className="mt-1 text-sm">Create Ticket</span>
         </li>
+
 
         {/* Open Item */}
         <li
-          className={`p-4 cursor-pointer flex items-center 
+          className={`p-2 cursor-pointer flex flex-col items-center 
             ${activeItem === 'Open' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
           onClick={() => handleNavigation('Open')}
         >
-          <FolderOpenIcon className="h-12 w-12" />
-          <span className="ml-4">Open</span>
-        </li>
+          <img 
+            src="/checked_default.png" // Default image
+            alt="Open Icon" 
+            style={{ height: '1.625rem', width: '1.625rem' }} 
+            className='open-icon' // Add class for styling
+          />
+          <img 
+            src="/checked.png" // Image to show on hover
+            alt="Open Icon Hover" 
+            style={{ height: '1.625rem', width: '1.625rem' }} 
+            className='open-icon-hover' // Class for hover image
+          />
+          <span className="mt-1 text-sm">Open</span>
+</li>
+
+
+
 
         {/* Close Item */}
         <li
-          className={`p-4 cursor-pointer flex items-center 
-            ${activeItem === 'Close' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
-          onClick={() => handleNavigation('Close')}
-        >
-          <FolderIcon className="h-12 w-12" />
-          <span className="ml-4">Close</span>
-        </li>
+  className={`p-2 cursor-pointer flex flex-col items-center 
+    ${activeItem === 'Close' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
+  onClick={() => handleNavigation('Close')}
+>
+  <img 
+    src="/cancel_default.png" // Default image
+    alt="Close Icon" 
+    style={{ height: '1.625rem', width: '1.625rem' }} 
+    className='close-icon' // Class for default image styling
+  />
+  <img 
+    src="/cancel.png" // Image to show on hover
+    alt="Close Icon Hover" 
+    style={{ height: '1.625rem', width: '1.625rem' }} 
+    className='close-icon-hover' // Class for hover image
+  />
+  <span className="mt-1 text-sm">Close</span>
+</li>
+
+
+
 
         {/* Report Item */}
         <li
-          className={`p-4 cursor-pointer flex items-center 
-            ${activeItem === 'Report' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
-          onClick={() => handleNavigation('Report')}
-        >
-          <DocumentChartBarIcon className="h-12 w-12" />
-          <span className="ml-4">Report</span>
-        </li>
+              className={`p-2 cursor-pointer flex flex-col items-center 
+                ${activeItem === 'Report' ? 'border-l-4 border-red-500 shadow-lg' : ''}`}
+              onClick={() => handleNavigation('Report')}
+            >
+              <img 
+                src="/categories.png" // Update the path as necessary
+                alt="Report Icon" 
+                style={{ height: '1.625rem', width: '1.625rem' }} 
+                className='report-icon' // Add class for styling
+              />
+              <span className="mt-1 text-sm">Report</span>
+          </li>
+
+
       </ul>
     </div>
   );

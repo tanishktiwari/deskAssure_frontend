@@ -1,152 +1,55 @@
-/* Footer.css */
-
-/* General Styles */
-.footer-container {
-  margin-top: 10%;
-  background-color: #222222;
-  color: #a7a7a7;
-  padding: 25px 45px;
-  font-family: 'Lato', sans-serif;
-}
-
-.footer-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  margin-left: 4.5%;
-}
-
-.footer-col {
-  display: flex;
-  align-items: center;
-}
-
-.footer-col-right {
-  text-align: right;
-}
-
-.contact-info {
-  display: flex;
-  align-items: center;
+.description-text {
+  font-family: 'Inter', sans-serif; /* Ensure you have this font available */
+  font-size: 16px;
   font-weight: 400;
-  line-height: 27px;
-  letter-spacing: 0em;
-  font-size: 18px;
-}
-
-.contact-icon {
-  height: 24px;
-  width: 24px;
-  margin-right: 8px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.mail-icon {
-  background-image: url('../../../public/mail.png');
-}
-
-.call-icon {
-  background-image: url('../../../public/call.png');
-}
-
-/* Remove the border-bottom from the footer-row */
-.footer-row {
-  border-bottom: none;
-}
-
-.footer-links-row {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid #FFFFFF29;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: space-between;
+  line-height: 22.4px;
+  text-align: left;
+  color: #8F9FA3;
+; /* Use this color for the text */
 }
 
 .footer-link {
-  color: #FFFFFF80;
-  text-decoration: none;
-  margin-right: 15px;
+  font-family: 'SF Pro Text', sans-serif; /* Ensure you have this font available */
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22.4px;
+  text-align: left;
+  color: #d1d5db; /* Use this color for the text */
+  transition: color 0.2s;
 }
 
 .footer-link:hover {
-  color: #FFFFFF;
+  color: white; /* Change color on hover */
 }
 
-.footer-copyright {
-  color: #FFFFFF80;
+.contact-title {
+  font-family: 'Inter', sans-serif; /* Ensure you have this font available */
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.01em;
+  text-align: left;
 }
 
-/* Responsive Styles */
-
-/* Tablet devices (768px and below) */
-@media (max-width: 768px) {
-  .footer-container {
-    padding: 20px;
-  }
-  
-  .footer-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-col-right {
-    text-align: left;
-    margin-top: 10px;
-  }
-
-  .footer-links {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-link {
-    margin-bottom: 10px;
-    margin-right: 0;
-  }
-
-  .footer-copyright {
-    margin-top: 15px;
-  }
+.copyright-text {
+  font-family: 'SF Pro Text', sans-serif; /* Ensure you have this font available */
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16.8px;
+  text-align: left;
+  color: #8F9FA3; /* Use this color for the text */
+}
+.more-about-us {
+  font-family: 'SF Pro Text', sans-serif; /* Ensure you have this font available */
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: left;
+  color: white; /* Text color set to white */
+  transition: color 0.2s; /* Optional: transition effect on hover */
 }
 
-/* Mobile devices (480px and below) */
-@media (max-width: 480px) {
-  .footer-container {
-    padding: 15px;
-  }
-
-  .footer-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-col-right {
-    text-align: left;
-    margin-top: 15px;
-  }
-
-  .contact-info {
-    font-size: 16px;
-  }
-
-  .footer-links {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-link {
-    margin-bottom: 8px;
-    margin-right: 0;
-  }
-
-  .footer-copyright {
-    margin-top: 20px;
-    text-align: left;
-  }
+.more-about-us:hover {
+  color: #d1d5db; /* Optional: change color on hover */
 }
+

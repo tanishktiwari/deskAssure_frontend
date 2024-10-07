@@ -14,10 +14,9 @@ const CloseticketAdmin = () => {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      // Fetch closed tickets
       const response = await axios.get('http://localhost:5174/tickets/closed');
       setTickets(response.data);
-      fetchEtas(response.data); // Fetch ETAs for the tickets
+      await fetchEtas(); // Fetch ETAs after fetching tickets
     } catch (error) {
       console.error('Error fetching tickets:', error);
       setError('Failed to fetch tickets.');
@@ -26,18 +25,24 @@ const CloseticketAdmin = () => {
     }
   };
 
-  const fetchEtas = async (tickets) => {
-    const etasMap = {};
-    for (const ticket of tickets) {
-      try {
-        const response = await axios.get(`http://localhost:5174/tickets/eta/${ticket.ticketNo}`);
-        etasMap[ticket.ticketNo] = response.data.eta.totalHours; // Store total hours in the map
-      } catch (error) {
-        console.error('Error fetching ETA:', error);
-        etasMap[ticket.ticketNo] = 'N/A'; // Fallback in case of error
-      }
+  const fetchEtas = async () => {
+    try {
+      const response = await axios.get('http://localhost:5174/tickets/eta');
+      const etasMap = {};
+      
+      response.data.tickets.forEach(ticket => {
+        if (ticket.totalHours > 24) {
+          etasMap[ticket.ticketId] = `${ticket.totalDays} days`;
+        } else {
+          etasMap[ticket.ticketId] = `${ticket.totalHours} hours`;
+        }
+      });
+      
+      setEtas(etasMap);
+    } catch (error) {
+      console.error('Error fetching ETAs:', error);
+      // Handle the error appropriately
     }
-    setEtas(etasMap);
   };
 
   useEffect(() => {
@@ -83,7 +88,7 @@ const CloseticketAdmin = () => {
                       <th className="px-4 py-2">Company Name</th>
                       <th className="px-4 py-2">Issue Category</th>
                       <th className="px-4 py-2">Date</th>
-                      <th className="px-4 py-2">ETA (Hours)</th> {/* New ETA column */}
+                      <th className="px-4 py-2">ETA</th> {/* Updated ETA column header */}
                       <th className="px-4 py-2">Action</th>
                     </tr>
                   </thead>
@@ -96,7 +101,7 @@ const CloseticketAdmin = () => {
                         <td className="whitespace-nowrap px-4 py-2">{ticket.companyName || 'N/A'}</td>
                         <td className="whitespace-nowrap px-4 py-2">{ticket.issueCategory || 'N/A'}</td>
                         <td className="whitespace-nowrap px-4 py-2">{ticket.date || 'N/A'}</td>
-                        <td className="whitespace-nowrap px-4 py-2">{etas[ticket.ticketNo] || 'N/A'}</td> {/* Display ETA */}
+                        <td className="whitespace-nowrap px-4 py-2">{etas[ticket.ticketNo] || 'N/A'}</td> {/* Display formatted ETA */}
                         <td className="whitespace-nowrap px-4 py-2">
                           <div className="flex space-x-2">
                             <FontAwesomeIcon icon={faEye} className="cursor-pointer text-blue-600" title="View" onClick={() => handleOpenModal(ticket)} />

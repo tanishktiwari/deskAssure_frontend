@@ -10,9 +10,31 @@ export default {
         'custom-blue': '#0a3e53', // Existing custom color
         'custom-blue1': '#0a3e53', // New custom color
         'custom-green': '#23a76b', // New custom color
+        'customGray': '#e8ecef',
+        'buttoncolor': '#7a5cfa',
+        'fontcolor': '#666666',
+        'light-purple-1': '#F3E8FF', // Lighter version of #9181F4
+        'light-purple-2': '#D6C7FF', // Lighter version of #5038ED
+        'textcolor': "#525252",
+      },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(99.78deg, #9181F4 -5.85%, #5038ED 109.55%)',
+        'custom-gradient-2': 'linear-gradient(to right, #988af4, #8c7df2, #8b79f3)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       spacing: {
-        '400': '400px'
+        '400': '400px',
+        '900': "1020px",
+        '128': "123px",
+        '333': "32px",
+        '1818': "8px",
+        "6464": "64px",
+      },
+      margin: {
+        '-16': '-25%', // You can name it as you like
       },
       animation: {
         blob: "float 20s ease-in-out infinite both alternate",

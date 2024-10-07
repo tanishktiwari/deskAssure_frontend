@@ -10,9 +10,10 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
   const [engineerId, setEngineerId] = useState('');
   const [ticketId, setTicketId] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  
+
   // State for current date and time
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [ticketDetails, setTicketDetails] = useState(null); // New state to hold ticket details
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -44,13 +45,17 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
       setPreventiveAction(ticket.preventiveAction || '');
       setWarrantyCategory(ticket.warrantyCategory || '');
       setTicketStatus(ticket.status || '');
+      setTicketDetails(ticket); // Set ticket details directly from props
     } else {
       const storedTicketId = localStorage.getItem('selectedTicketId');
       if (storedTicketId) {
         const fetchTicketDetails = async () => {
           try {
             const response = await axios.get(`http://localhost:5174/ticket-details/${storedTicketId}`);
-            setTicketId(storedTicketId);
+            setTicketDetails(response.data); // Update ticketDetails with API response
+
+            // Populate fields with fetched ticket data
+            setTicketId(response.data.ticketId);
             setResolution(response.data.resolution || '');
             setPreventiveAction(response.data.preventiveAction || '');
             setWarrantyCategory(response.data.warrantyCategory || '');
@@ -65,42 +70,72 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
     }
   }, [ticket, isOpen]);
 
-  if (!isOpen) return null;
-
   const handleSubmit = async () => {
-    try {
-      const reportData = {
-        resolution,
-        preventiveAction,
-        warrantyCategory,
-        engineerId,
+  try {
+    const reportData = {
+      resolution,
+      preventiveAction,
+      warrantyCategory,
+      engineerId,
+      // Add closeDate and closeTime derived from currentDateTime
+      closeDate: currentDateTime.toLocaleDateString('en-US'), // Format as MM/DD/YYYY
+      closeTime: currentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) // Format as hh:mm AM/PM
+    };
+
+    const idToUse = ticket ? ticket.ticketId : ticketId;
+
+    if (ticketStatus === 'Complete') {
+      // Send a request to close the ticket
+      await axios.put(`http://localhost:5174/tickets/close/${idToUse}`, {
+        closeDate: reportData.closeDate,
+        closeTime: reportData.closeTime,
+      });
+
+      // Send WhatsApp message
+      const messageData = {
+        to: `+91${ticketDetails?.contactNumber}`,
+        name: ticketDetails?.name,
+        ticketId: idToUse,
+        engineerName: engineers.find(engineer => engineer._id === engineerId)?.name || 'Engineer',
+        eta: 'N/A' // Since we're closing the ticket, ETA might not be relevant
       };
 
-      const idToUse = ticket ? ticket.ticketId : ticketId;
+      await axios.post('http://localhost:5174/send-close-whatsapp-message', messageData);
+      console.log('Close WhatsApp message sent');
 
-      if (ticketStatus === 'Complete') {
-        await axios.put(`http://localhost:5174/tickets/close/${idToUse}`);
-        setShowSuccessPopup(true);
-      } else {
-        await axios.put(`http://localhost:5174/tickets/update/${idToUse}`, reportData);
-      }
-
-      onClose();
-    } catch (error) {
-      console.error('Error submitting report:', error.message);
+      setShowSuccessPopup(true);
+    } else {
+      await axios.put(`http://localhost:5174/tickets/update/${idToUse}`, reportData);
     }
-  };
+
+    onClose();
+  } catch (error) {
+    console.error('Error submitting report:', error.message);
+  }
+};
+
+
 
   const handleClosePopup = () => {
     setShowSuccessPopup(false);
     onClose();
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50">
-      <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl mx-2 overflow-hidden">
-        <h2 className="text-lg font-bold mb-2 text-center">Ticket Details</h2>
+      <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl mx-2 overflow-hidden relative">
+        {/* Close Button */}
+        <button 
+          onClick={onClose} 
+          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+          aria-label="Close"
+        >
+          &times;
+        </button>
 
+        <h2 className="text-lg font-bold mb-2 text-center">Ticket Details</h2>
 
         <div className="mb-2">
           <label className="block text-gray-700">Ticket ID:</label>
@@ -119,7 +154,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               <label className="block text-gray-700">Name:</label>
               <input
                 type="text"
-                value={ticket?.name || ''}
+                value={ticketDetails?.name || ''}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -128,7 +163,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               <label className="block text-gray-700">Contact Number:</label>
               <input
                 type="text"
-                value={ticket?.['Contact Number'] || ''}
+                value={ticketDetails?.contactNumber || ''}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -137,7 +172,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               <label className="block text-gray-700">Email ID:</label>
               <input
                 type="email"
-                value={ticket?.['Email ID'] || ''}
+                value={ticketDetails?.email || ''}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -146,7 +181,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               <label className="block text-gray-700">Company Name:</label>
               <input
                 type="text"
-                value={ticket?.['Company Name'] || ''}
+                value={ticketDetails?.companyName || ''}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -155,7 +190,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               <label className="block text-gray-700">Issue Category:</label>
               <input
                 type="text"
-                value={ticket?.['Issue Category'] || ''}
+                value={ticketDetails?.issueCategory || 'N/A'}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -163,7 +198,7 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
             <div className="mb-2">
               <label className="block text-gray-700">Issue Description:</label>
               <textarea
-                value={ticket?.['Issue Description'] || ''}
+                value={ticketDetails?.issueDescription || ''}
                 readOnly
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               />
@@ -173,16 +208,16 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
           <div className="w-1/2 p-2 overflow-y-auto max-h-96">
             <h3 className="text-md font-semibold mb-1">Admin Input</h3>
             <div className="mb-2">
-        {/* Current Date and Time Display as a Read-Only Input Field */}
-        <div className="mb-2">
-          <label className="block text-gray-700">Current Date and Time:</label>
-          <input
-            type="text"
-            value={currentDateTime.toLocaleString()}
-            readOnly
-            className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded cursor-not-allowed"
-          />
-        </div>
+              {/* Current Date and Time Display as a Read-Only Input Field */}
+              <div className="mb-2">
+                <label className="block text-gray-700">Current Date and Time:</label>
+                <input
+                  type="text"
+                  value={currentDateTime.toLocaleString()}
+                  readOnly
+                  className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded cursor-not-allowed"
+                />
+              </div>
               <label className="block text-gray-700">Resolution:</label>
               <textarea
                 value={resolution}
@@ -215,26 +250,13 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
               </select>
             </div>
             <div className="mb-2">
-              <label className="block text-gray-700">Ticket Status:</label>
-              <select
-                value={ticketStatus}
-                onChange={(e) => setTicketStatus(e.target.value)}
-                className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
-              >
-                <option value="">Please select</option>
-                <option>Pending</option>
-                <option>In Progress</option>
-                <option>Complete</option>
-              </select>
-            </div>
-            <div className="mb-2">
-              <label className="block text-gray-700">Engineer Name (Required):</label>
+              <label className="block text-gray-700">Engineer:</label>
               <select
                 value={engineerId}
                 onChange={(e) => setEngineerId(e.target.value)}
                 className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
               >
-                <option value="">Please select</option>
+                <option value="">Select Engineer</option>
                 {engineers.map(engineer => (
                   <option key={engineer._id} value={engineer._id}>
                     {engineer.name}
@@ -242,24 +264,37 @@ const TicketDetailsModal = ({ isOpen, onClose, ticket }) => {
                 ))}
               </select>
             </div>
+            <div className="mb-2">
+              <label className="block text-gray-700">Ticket Status:</label>
+              <select
+                value={ticketStatus}
+                onChange={(e) => setTicketStatus(e.target.value)}
+                className="block w-full bg-gray-200 border border-gray-300 text-gray-700 py-1 px-2 rounded"
+              >
+                <option value="">Select Status</option>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Complete">Complete</option>
+              </select>
+            </div>
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+            >
+              Submit
+            </button>
           </div>
-        </div>
-
-        <div className="text-center mt-2">
-          <button onClick={handleSubmit} className="bg-blue-500 text-white font-bold py-1 px-3 rounded">
-            Submit Report
-          </button>
         </div>
 
         {/* Success Popup */}
         {showSuccessPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50">
-            <div className="bg-white p-4 rounded shadow-lg">
-              <h2 className="text-lg font-bold mb-4 text-center">Ticket Closed</h2>
-              <p>The ticket has been successfully closed.</p>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
+            <div className="bg-white rounded-lg shadow-lg p-4 w-80 text-center">
+              <h3 className="text-lg font-bold mb-2">Success</h3>
+              <p>Ticket has been closed successfully!</p>
               <button
                 onClick={handleClosePopup}
-                className="bg-blue-500 text-white font-bold py-1 px-3 rounded mt-4"
+                className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600 transition duration-200 mt-2"
               >
                 Close
               </button>

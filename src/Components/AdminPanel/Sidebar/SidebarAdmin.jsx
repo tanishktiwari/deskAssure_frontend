@@ -1,99 +1,162 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SidebarAdmin = () => {
-  const location = useLocation();
+  const [activeItem, setActiveItem] = useState("Home"); // Default to 'Home'
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleNavigation = (item) => {
+    setActiveItem(item);
+    switch (item) {
+      case "Home":
+        navigate("/dashboardadmin"); // Navigate to Admin Dashboard
+        break;
+      case "Open":
+        navigate("/openticketadmin"); // Navigate to Open page
+        break;
+      case "Close":
+        navigate("/closeticketadmin"); // Navigate to Close page
+        break;
+      case "Report":
+        // navigate("/dashboard/report"); // Navigate to Report page
+        break;
+      case "Operator":
+        navigate("/operator"); // Navigate to Operator page
+        break;
+      case "Company":
+        navigate("/company"); // Navigate to Company page (update path as needed)
+        break;
+      case "Engineer":
+        navigate("/engineer"); // Navigate to Engineer page (update path as needed)
+        break;
+      case "Issue category":
+        navigate("/issue-category"); // Navigate to Issue category page (update path as needed)
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
-    <div className="bg-custom-blue1 text-gray-300 w-64 h-full shadow-lg">
-      <div className="p-4">
-        <ul>
-          <li className="flex items-center mb-4">
-            <img src="" alt="" className="w-8 h-8 mr-2" />
-            <span className="text-lg font-semibold">Admin Panel</span>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/" ? "bg-gray-700" : ""}`}>
-            <Link to="/">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/846/846449.png"
-                className="w-6 h-6 mr-2"
-                alt="Dashboard"
-              />
-              <span className="sidebar_text">Dashboard</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/open" ? "bg-gray-700" : ""}`}>
-            <Link to="/openticketadmin">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/1234/1234036.png"
-                className="w-6 h-6 mr-2"
-                alt="Open"
-              />
-              <span className="sidebar_text">Open</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/close" ? "bg-gray-700" : ""}`}>
-            <Link to="/closeticketadmin">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/17663/17663136.png"
-                className="w-6 h-6 mr-2"
-                alt="Closed"
-              />
-              <span className="sidebar_text">Close</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/company" ? "bg-gray-700" : ""}`}>
-            <Link to="/company">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/993/993891.png"
-                className="w-6 h-6 mr-2"
-                alt="Company"
-              />
-              <span className="sidebar_text">Company</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/operator" ? "bg-gray-700" : ""}`}>
-            <Link to="/operator">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/1839/1839274.png"
-                className="w-6 h-6 mr-2"
-                alt="Operator"
-              />
-              <span className="sidebar_text">Operator</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/engineers" ? "bg-gray-700" : ""}`}>
-            <Link to="/engineers">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/3220/3220202.png"
-                className="w-6 h-6 mr-2"
-                alt="Engineer"
-              />
-              <span className="sidebar_text">Engineer</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/issue-category-details" ? "bg-gray-700" : ""}`}>
-            <Link to="/issue-category-details">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/4013/4013399.png"
-                className="w-6 h-6 mr-2"
-                alt="Category"
-              />
-              <span className="sidebar_text">Category</span>
-            </Link>
-          </li>
-          <li className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${location.pathname === "/report" ? "bg-gray-700" : ""}`}>
-            <Link to="/report">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/17514/17514983.png"
-                className="w-6 h-6 mr-2"
-                alt="Report"
-              />
-              <span className="sidebar_text">Report</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
+    <div className="sidebar bg-custom-blue1 text-white fixed top-1 left-0 h-screen w-28">
+      <ul className="sidebar-menu flex flex-col mt-8 space-y-0 pt-12 items-center">
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Home" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Home")}
+        >
+          <img
+            src="/dashboard.png"
+            alt="Dashboard Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="dashboard-logo"
+          />
+          <span className="mt-1 text-sm">Dashboard</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+            ${activeItem === "Open" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Open")}
+        >
+          <img
+            src="/checked_default.png"
+            alt="Open Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="open-icon"
+          />
+          <img
+            src="/checked.png"
+            alt="Open Icon Hover"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="open-icon-hover"
+          />
+          <span className="mt-1 text-sm">Open</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Close" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Close")}
+        >
+          <img
+            src="/cancel_default.png"
+            alt="Close Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="close-icon"
+          />
+          <img
+            src="/cancel.png"
+            alt="Close Icon Hover"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="close-icon-hover"
+          />
+          <span className="mt-1 text-sm">Close</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Company" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Company")}
+        >
+          <img
+            src="/building.png"
+            alt="Company Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="company-icon"
+          />
+          <span className="mt-1 text-sm">Company</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Operator" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Operator")}
+        >
+          <img
+            src="/help-operator.png"
+            alt="Operator Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="operator-icon"
+          />
+          <span className="mt-1 text-sm">Operator</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Engineer" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Engineer")}
+        >
+          <img
+            src="/help-operator.png"
+            alt="Engineer Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="engineer-icon"
+          />
+          <span className="mt-1 text-sm">Engineer</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+    ${activeItem === "Issue category" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Issue category")}
+        >
+          <img
+            src="/help-operator.png"
+            alt="Issue category Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="issue-icon"
+          />
+          <span className="mt-1 text-sm">Issue category</span>
+        </li>
+        <li
+          className={`p-1 cursor-pointer flex flex-col items-center 
+                ${activeItem === "Report" ? "border-l-4 border-red-500 shadow-lg" : ""}`}
+          onClick={() => handleNavigation("Report")}
+        >
+          <img
+            src="/categories.png"
+            alt="Report Icon"
+            style={{ height: "1.625rem", width: "1.625rem" }}
+            className="report-icon"
+          />
+          <span className="mt-1 text-sm">Report</span>
+        </li>
+      </ul>
     </div>
   );
 };

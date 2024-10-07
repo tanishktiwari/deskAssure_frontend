@@ -1,13 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import ProfileIcon from './ProfileIcon'; // Import the ProfileIcon component
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faBell, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faPlus} from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import '../Navbar/Navbar.css'; // Adjust the path as needed
 
 const Navbar = () => {
   const navigate = useNavigate(); // Initialize navigate
+  const [userInitials, setUserInitials] = useState(''); // State for user initials
+  const [operatorName, setOperatorName] = useState(''); // State for operator name
+  const mobileNumber = localStorage.getItem('loggedInUserMobileNumber'); // Get mobile number from local storage
+
+  useEffect(() => {
+    const fetchOperatorData = async () => {
+      if (mobileNumber) {
+        try {
+          // Fetch operator data using mobile number
+          const response = await axios.get(`http://localhost:5174/operators/mobile/${mobileNumber}`);
+          setOperatorName(response.data.operatorName); // Store operator name
+
+          // Determine which API to call based on operatorName
+          const names = response.data.operatorName.split(' ');
+          let initialsApiUrl;
+
+          if (names.length > 1) {
+            // Both first and last name
+            initialsApiUrl = `http://localhost:5174/operators/initials/${mobileNumber}`;
+          } else {
+            // Only first name
+            initialsApiUrl = `http://localhost:5174/operators/initials-two/${mobileNumber}`;
+          }
+
+          // Fetch initials
+          const initialsResponse = await axios.get(initialsApiUrl);
+          setUserInitials(initialsResponse.data.initials); // Store initials in state
+        } catch (error) {
+          console.error('Error fetching operator data:', error);
+        }
+      } else {
+        console.error('No mobile number found in local storage.');
+      }
+    };
+
+    fetchOperatorData();
+  }, [mobileNumber]);
 
   const handleProfileClick = () => {
     navigate('/user-login'); // Redirect to UserLoginPage
@@ -18,9 +55,7 @@ const Navbar = () => {
     localStorage.removeItem('authToken');
     sessionStorage.removeItem('authToken');
     navigate('/user-login');
-  }; 
-
-  const userInitials = ''; // Replace with dynamic initials as needed
+  };
 
   return (
     <nav className="bg-custom-blue w-full fixed top-0 left-0 navbar">
@@ -36,21 +71,29 @@ const Navbar = () => {
             {/* Add icon */}
             <button 
               className="bg-green-500 text-white hover:bg-green-600 p-2 w-10 h-10 flex items-center justify-center rounded-md"
-              onClick={() => navigate('/dashboard/create-ticket')} // Redirect to Create Ticket page
+              onClick={() => navigate('/dashboard/create-ticket')}
             >
               <FontAwesomeIcon icon={faPlus} className="text-2xl" />
             </button>
 
             {/* Bell icon */}
-            <button className="text-white hover:bg-gray-700 p-2 rounded-full">
-              <FontAwesomeIcon icon={faBell} />
+            <button className="notification-button">
+                  <img 
+                    src="/bell.png" // Default white icon
+                    alt="Notification Bell" 
+                    className="icon" 
+                  />
             </button>
 
+
+
             {/* Settings icon */}
-            <button className="text-white hover:bg-gray-700 p-2 rounded-full"
-            onClick={() => navigate('/dashboard/Profileform')}
-            >
-              <FontAwesomeIcon icon={faCog} />
+            <button className="settings-button" onClick={() => navigate('/dashboard/Profileform')}>
+              <img 
+                    src="/settings.png" // Default white icon
+                    alt="Notification Bell" 
+                    className="settings" 
+                  />
             </button>
 
             {/* Profile dropdown */}
@@ -58,7 +101,10 @@ const Navbar = () => {
               <div>
                 <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="sr-only">Open user menu</span>
-                  <ProfileIcon initials={userInitials} diameter={32} backgroundColor="#3498db" textColor="#fff" />
+                  {/* New Profile Icon */}
+                  <div className="h-9 w-9 bg-yellow-200 rounded-full flex justify-center items-center text-yellow-500 text-2xl font-mono">
+                    {userInitials || 'i'}
+                  </div>
                 </MenuButton>
               </div>
               <MenuItems

@@ -25,5 +25,49 @@
 .navbar {
   z-index: 55;
 }
+.notification-button {
+  padding: 0.5rem; /* Adjust padding as needed */
+  border-radius: 9999px; /* Full rounded button */
+  background-color: transparent; /* Default background */
+  transition: background-color 0.3s; /* Smooth transition for background */
+}
+
+.notification-button:hover {
+  background-color: rgba(34, 197, 94, 0.5); /* Light green background on hover */
+}
+
+.notification-button .icon {
+  height: 1.5rem; /* Set height */
+  width: 1.5rem; /* Set width */
+  filter: brightness(0) invert(1); /* Makes the icon white */
+  transition: filter 0.3s; /* Smooth transition for filter */
+}
+
+.notification-button:hover .icon {
+  filter: brightness(0) saturate(1000%) hue-rotate(90deg); /* Adjust for green color on hover */
+}
+
+
+.settings-button {
+  padding: 0.5rem; /* Adjust padding as needed */
+  border-radius: 9999px; /* Full rounded button */
+  background-color: transparent; /* Default background */
+  transition: background-color 0.3s; /* Smooth transition for background */
+}
+
+.settings-button:hover {
+  background-color: rgba(34, 197, 94, 0.5); /* Light green background on hover */
+}
+
+.settings-button .settings {
+  height: 1.5rem; /* Set height */
+  width: 1.5rem; /* Set width */
+  filter: brightness(0) invert(1); /* Makes the icon white */
+  transition: filter 0.3s; /* Smooth transition for filter */
+}
+
+.settings-button:hover .settings {
+  filter: brightness(0) saturate(1000%) hue-rotate(90deg); /* Adjust for green color on hover */
+}
 
 

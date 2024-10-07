@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faComments, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import TicketDetailsModal from './TicketDetailsModal';
+import AssignTicketModal from './AssignTicketModal';
 
 const OpenticketAdmin = () => {
   const [tickets, setTickets] = useState([]);
@@ -10,13 +11,29 @@ const OpenticketAdmin = () => {
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [assignModalOpen, setAssignModalOpen] = useState(false); // State for AssignModal
+
+  const handleOpenAssignModal = (ticket) => {
+  setSelectedTicket(ticket); // Set the selected ticket
+  setAssignModalOpen(true); // Open the assign modal
+};
+
+
+  const handleCloseAssignModal = () => {
+    setAssignModalOpen(false); // Close the assign modal
+  };
 
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      // Update the API endpoint to fetch only open tickets
       const response = await axios.get('http://localhost:5174/tickets/open');
       setTickets(response.data);
+
+      // Store ticket numbers in local storage
+      const ticketNumbers = response.data.map(ticket => ticket.ticketNo);
+      localStorage.setItem('ticketNumbers', JSON.stringify(ticketNumbers));
+      console.log('Stored ticket numbers:', ticketNumbers); // Log the ticket numbers
+
     } catch (error) {
       console.error('Error fetching tickets:', error);
       setError('Failed to fetch tickets.');
@@ -86,7 +103,7 @@ const OpenticketAdmin = () => {
                           <div className="flex space-x-2">
                             <FontAwesomeIcon icon={faEye} className="cursor-pointer text-blue-600" title="View" onClick={() => handleOpenModal(ticket)} />
                             <FontAwesomeIcon icon={faComments} className="cursor-pointer text-green-600" title="Chat" />
-                            <FontAwesomeIcon icon={faUserPlus} className="cursor-pointer text-yellow-600" title="Assign" />
+                            <FontAwesomeIcon icon={faUserPlus} className="cursor-pointer text-yellow-600" title="Assign" onClick={() => handleOpenAssignModal(ticket)} />
                           </div>
                         </td>
                       </tr>
@@ -100,6 +117,7 @@ const OpenticketAdmin = () => {
       </div>
 
       <TicketDetailsModal isOpen={modalOpen} onClose={handleCloseModal} ticket={selectedTicket} />
+      <AssignTicketModal isOpen={assignModalOpen} onClose={handleCloseAssignModal} ticket={selectedTicket} /> {/* Include AssignTicketModal */}
     </div>
   );
 };

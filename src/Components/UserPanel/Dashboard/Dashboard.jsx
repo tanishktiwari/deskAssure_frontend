@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom'; // Import Outlet for nested routing
 import Navbar from './Navbar/Navbar';
 import Sidebar from './Sidebar/Sidebar';
 import Footer from '../../Footer/Footer'; // Adjust path as necessary
 
 const Dashboard = () => {
+  const [isFooterHidden, setIsFooterHidden] = useState(true);
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -14,7 +15,7 @@ const Dashboard = () => {
           <Outlet /> {/* Renders the matched child route */}
         </main>
       </div>
-      <Footer />
+      <Footer className={isFooterHidden ? 'hidden' : ''} />
     </div>
   );
 };

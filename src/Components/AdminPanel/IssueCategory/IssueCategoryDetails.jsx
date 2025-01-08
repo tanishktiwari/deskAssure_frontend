@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa"; // Import icons
-import "../IssueCategory/IssueCategoryDetails.css"; // Ensure this file exists for styling
+import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons
+import "../IssueCategory/IssueCategoryDetails.css";
 
 const IssueCategoryDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -9,13 +9,14 @@ const IssueCategoryDetails = () => {
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [showSearchBox, setShowSearchBox] = useState(false); // State for showing search box
   const itemsPerPage = 10;
 
   // Fetch all issue categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3000/issue-categories");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/issue-categories`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -50,9 +51,8 @@ const IssueCategoryDetails = () => {
     setCurrentPage(1); // Reset to the first page on search
   };
 
-  const handleClearSearch = () => {
-    setSearchTerm("");
-    setCurrentPage(1); // Reset to the first page on clear
+  const handleSearchIconClick = () => {
+    setShowSearchBox(!showSearchBox);
   };
 
   const handleSubmit = async () => {
@@ -64,8 +64,8 @@ const IssueCategoryDetails = () => {
     try {
       const method = editingCategoryId ? "PUT" : "POST";
       const url = editingCategoryId
-        ? `http://localhost:3000/issue-categories/${editingCategoryId}`
-        : "http://localhost:3000/issue-categories";
+        ? `${import.meta.env.VITE_API_URL}/issue-categories/${editingCategoryId}`
+        : `${import.meta.env.VITE_API_URL}/issue-categories`;
 
       const response = await fetch(url, {
         method,
@@ -104,7 +104,7 @@ const IssueCategoryDetails = () => {
   const handleDeleteClick = async (id) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        const response = await fetch(`http://localhost:3000/issue-categories/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/issue-categories/${id}`, {
           method: "DELETE",
         });
 
@@ -130,110 +130,174 @@ const IssueCategoryDetails = () => {
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+  const totalEntries = filteredCategories.length; // Define totalEntries here
+  const totalPages = Math.ceil(totalEntries / itemsPerPage);
 
   return (
-    <div className="issue-category-container">
-      <div className="header-container-issue">
-        <h2>Issue Category Details</h2>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="search-input-box"
+    <div className="max-w-6xl mx-auto p-4 ml-[12%] mt-14">
+      {/* Statistics section */}
+      <div className="flex justify-between items-center bg-white p-6 shadow-md rounded-md mb-6">
+        <div className="flex items-center">
+          <img
+            src="/Group_10.png"
+            alt="Operator Icon"
+            className="mr-4 h-16 w-16"
           />
-          <button className="add-button" onClick={handleAddClick}>
-            ADD Issue Category
-          </button>
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-green-600">
+              {totalEntries}
+            </div>
+            <div className="text-gray-500">Total Issue Categories</div>
+          </div>
+        </div>
+        <div className="flex items-center">
+          <img
+            src="/Group_11.png"
+            alt="Company Icon"
+            className="mr-4 h-16 w-16"
+          />
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-gray-800">
+              {totalEntries}
+            </div>
+            <div className="text-gray-500">Companies</div>
+            {/* <div className="text-sm text-red-500">↓ 1% this month</div> */}
+          </div>
+        </div>
+        <div className="flex items-center">
+          <img
+            src="/Group_12.png"
+            alt="Ticket Icon"
+            className="mr-4 h-16 w-16"
+          />
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-green-600">189</div>
+            <div className="text-gray-500">Active Tickets</div>
+          </div>
         </div>
       </div>
 
-      {showPopup && (
-        <div className="popup-overlay-issue">
-          <div className="popup-container-issue">
-            <div className="popup-header-issue">
-              <h3>{editingCategoryId ? "Edit Issue Category" : "Create Issue Category"}</h3>
-            </div>
-            <div className="popup-body-issue">
-              <label htmlFor="issue-category">
-                Issue Category<span className="required-star">*</span>
-              </label>
-              <input
-                id="issue-category"
-                type="text"
-                placeholder="Enter your category issue"
-                value={issueCategory}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="popup-footer-issue">
-              <button className="cancel-button" onClick={handleClosePopup}>
-                Cancel
+      {/* Table */}
+      <div className="bg-white p-6 shadow-md rounded-md">
+        {/* Header and Search */}
+        <div className="bg-white p-6 shadow-md rounded-md mb-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Company Details</h2>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowSearchBox(!showSearchBox)}
+                className="relative"
+              >
+                <img src="/search.png" alt="Search" className="w-6 h-6" />
               </button>
-              <button className="submit-button" onClick={handleSubmit}>
-                {editingCategoryId ? "Update" : "Submit"}
+              {showSearchBox && (
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="border rounded-md py-2 px-4"
+                />
+              )}
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleAddClick}
+              >
+                ADD Category
               </button>
             </div>
           </div>
-        </div>
-      )}
 
-      <table className="details-table-issue">
-        <thead>
-          <tr>
-            <th>Option</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedCategories.map((category) => (
-            <React.Fragment key={category._id}>
-              <tr>
-                <td>{category.name}</td>
-                <td>
-                  <button className="action-button" onClick={() => handleEditClick(category)}>
+          {showPopup && (
+            <div className="popup-overlay-issue">
+              <div className="popup-container-issue">
+                <div className="popup-header-issue">
+                  <h3>{editingCategoryId ? "Edit Issue Category" : "Create Issue Category"}</h3>
+                </div>
+                <div className="popup-body-issue">
+                  <label htmlFor="issue-category">
+                    Issue Category<span className="required-star">*</span>
+                  </label>
+                  <input
+                    id="issue-category"
+                    type="text"
+                    placeholder="Enter your category issue"
+                    value={issueCategory}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="popup-footer-issue">
+                  <button className="cancel-button" onClick={handleClosePopup}>
+                    Cancel
+                  </button>
+                  <button className="submit-button" onClick={handleSubmit}>
+                    {editingCategoryId ? "Update" : "Add"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="border-b-2 p-4 text-left">Issue - Category Name</th>
+              <th className="border-b-2 p-4 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedCategories.map((category) => (
+              <tr key={category._id}>
+                <td className="border-b p-4">{category.name}</td>
+                <td className="border-b p-4">
+                  <button
+                    onClick={() => handleEditClick(category)}
+                    className="mr-2 text-blue-500 hover:text-blue-700"
+                  >
                     <FaEdit />
                   </button>
-                  <button className="action-button" onClick={() => handleDeleteClick(category._id)}>
+                  <button
+                    onClick={() => handleDeleteClick(category._id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
                     <FaTrash />
                   </button>
                 </td>
               </tr>
-              <tr className="row-divider"></tr>
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <div className="table-footer">
-        <span className="showing-text">
-          Showing {paginatedCategories.length} of {filteredCategories.length} entries
-        </span>
-        <div className="pagination-controls">
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-6">
+        <div>
+          Showing data {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalEntries)} of {totalEntries} entries
+        </div>
+
+        <div className="flex items-center space-x-2">
           <button
-            className="pagination-button"
+            className="px-4 py-2 border rounded-md"
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            Previous
+            &lt;
           </button>
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              className={`pagination-button ${index + 1 === currentPage ? "active" : ""}`}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
+
           <button
-            className="pagination-button"
+            className="px-4 py-2 text-white rounded-md"
+            style={{ backgroundColor: "#5932EA" }}
+          >
+            {currentPage}
+          </button>
+
+          <button
+            className="px-4 py-2 border rounded-md"
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            Next
+            &gt;
           </button>
         </div>
       </div>

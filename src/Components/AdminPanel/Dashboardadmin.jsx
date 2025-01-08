@@ -1,10 +1,8 @@
 import React from 'react';
-import Sidebar from './Sidebar/SidebarAdmin'; // Ensure the correct path
-import Navbar from './Navbar/NavbarAdmin';   // Ensure the correct path
-import Footer from './Footer/FooterAdmin';   // Ensure the correct path
-import SidebarAdmin from './Sidebar/SidebarAdmin';
-import NavbarAdmin from './Navbar/NavbarAdmin';
-import FooterAdmin from './Footer/FooterAdmin';
+import SidebarAdmin from './Sidebar/SidebarAdmin';  // Ensure the correct path
+import NavbarAdmin from './Navbar/NavbarAdmin';    // Ensure the correct path
+import Footer from '../Footer/Footer';
+import { Outlet } from 'react-router-dom'   // Ensure the correct path
 
 const Dashboardadmin = () => {
   return (
@@ -12,12 +10,12 @@ const Dashboardadmin = () => {
       <NavbarAdmin />
       <div className="flex flex-1">
         <SidebarAdmin />
-        <main className="flex-1 p-6 bg-gray-100">
-          {/* Main content goes here */}
-          <h2 className="text-2xl font-bold mb-4">Dashboard Content</h2>
+        <main className="flex-1">
+          {/* Render the child components here */}
+         <Outlet />
         </main>
       </div>
-      <FooterAdmin />
+      <Footer />
     </div>
   );
 };

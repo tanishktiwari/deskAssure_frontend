@@ -79,57 +79,24 @@ const Adminpanel = () => {
 
       <div className="w-[45%] relative bg-gradient-to-r from-[#9181F4] to-[#5038ED] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0">
-          <img 
-            src="./login_image.png" 
-            alt="Login" 
-            className="w-full h-full object-cover" 
+          <img
+            src="./login_image.png"
+            alt="Login"
+            className="w-full h-full object-cover"
           />
         </div>
 
-        <div
-          className="w-[60%] h-[60%] absolute rounded-3xl"
+        <img
+          src="./login_page.gif"
+          alt="Tab Image"
+          className="w-[60%] h-auto object-cover absolute"
           style={{
-            top: '25%',
-            left: '55%',
-            transform: 'translateX(-50%)',
-            zIndex: 10,
-          }}
-        >
-          <img 
-            src="./right_panel_2.png" 
-            alt="Login" 
-            className="w-full h-full object-cover rounded-3xl"
-          />
-        </div>
-
-        <img 
-          src="./tab.png" 
-          alt="Tab Image" 
-          className="w-[400px] h-[320px] object-cover absolute"
-          style={{
-            top: '30.5%',
-            left: '55%',
-            transform: 'translateX(-50%)',
+            top: "50%",
+            left: "55%",
+            transform: "translate(-50%, -50%)",
             zIndex: 20,
-          }} 
-        />
-
-        <div
-          className="absolute z-20"
-          style={{
-            top: '35%',
-            left: '30%',
-            color: 'white',
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: '24px',
-            fontWeight: 700,
-            lineHeight: '32px',
-            textAlign: 'left',
-            maxWidth: '180px',
           }}
-        >
-          <p>Now have full visibility on your Service tickets</p>
-        </div>
+        />
       </div>
     </div>
   );

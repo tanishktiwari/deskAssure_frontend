@@ -2,7 +2,7 @@
 
 .issue-category-container {
   padding: 20px;
-  background-color: #f6f7fc; /* Ensure background for container if needed */
+  background-color: #f5f7fc; /* Ensure background for container if needed */
 }
 
 .header-container-issue {
@@ -50,10 +50,11 @@
 }
 
 body {
-  background-color: #f6f7fc;
+  background-color: #f5f7fc; /* Updated background color */
   margin: 0;
   font-family: Arial, sans-serif; /* Ensure a readable font */
 }
+
 
 /* New styles for the table */
 .details-table-issue {

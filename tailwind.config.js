@@ -6,6 +6,11 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '320px',  // Custom breakpoint for 320px
+        'sm': '375px',  // Custom breakpoint for 375px
+        'md': '425px',  // Custom breakpoint for 425px
+      },
       colors: {
         'custom-blue': '#0a3e53', // Existing custom color
         'custom-blue1': '#0a3e53', // New custom color
@@ -16,10 +21,15 @@ export default {
         'light-purple-1': '#F3E8FF', // Lighter version of #9181F4
         'light-purple-2': '#D6C7FF', // Lighter version of #5038ED
         'textcolor': "#525252",
+        'placeholderc' : "#1c1c1c"
       },
       backgroundImage: {
         'custom-gradient': 'linear-gradient(99.78deg, #9181F4 -5.85%, #5038ED 109.55%)',
         'custom-gradient-2': 'linear-gradient(to right, #988af4, #8c7df2, #8b79f3)',
+      },
+      boxShadow: {
+        'extra-sm': '0 1px 2px rgba(0, 0, 0, 0.05)', // Custom shadow smaller than shadow-sm
+        'black-transparent': '0 4px 6px rgba(0, 0, 0, 0.2)', // Custom transparent black shadow
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -30,7 +40,7 @@ export default {
         '900': "1020px",
         '128': "123px",
         '333': "32px",
-        '1818': "8px",
+        '1818': "6px",
         "6464": "64px",
       },
       margin: {

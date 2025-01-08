@@ -1,5 +1,5 @@
 .logo {
-  background-image: url("../../../../../public/TICKT\ \(2000\ x\ 400\ px\)\ \(3\)\ \(1\).png");
+  /* background-image: url("../../../../../public/logo_black_full.png"); */
   background-size: contain; /* Ensures the image fits within the div */
   background-repeat: no-repeat;
   background-position: center;
@@ -37,15 +37,12 @@
 }
 
 .notification-button .icon {
-  height: 1.5rem; /* Set height */
-  width: 1.5rem; /* Set width */
+  height: 1.3rem; /* Set height */
+  width: 1.3rem; /* Set width */
   filter: brightness(0) invert(1); /* Makes the icon white */
   transition: filter 0.3s; /* Smooth transition for filter */
 }
 
-.notification-button:hover .icon {
-  filter: brightness(0) saturate(1000%) hue-rotate(90deg); /* Adjust for green color on hover */
-}
 
 
 .settings-button {
@@ -55,9 +52,7 @@
   transition: background-color 0.3s; /* Smooth transition for background */
 }
 
-.settings-button:hover {
-  background-color: rgba(34, 197, 94, 0.5); /* Light green background on hover */
-}
+
 
 .settings-button .settings {
   height: 1.5rem; /* Set height */
@@ -69,5 +64,39 @@
 .settings-button:hover .settings {
   filter: brightness(0) saturate(1000%) hue-rotate(90deg); /* Adjust for green color on hover */
 }
+/* General Tooltip Styles */
+/* Tooltip container */
+.custom-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000; /* Ensure it's above other elements */
+}
 
+/* Tooltip becomes visible */
+.custom-tooltip.visible {
+  visibility: visible;
+  opacity: 1;
+  margin-top: 10px;
+}
 
+/* Tooltip for Create Ticket Button */
+.create-ticket-button + .custom-tooltip {
+  top: 100%; /* Position directly below the button */
+  left: 85%;   /* Align to the left edge of the button */
+  margin-top: 5px; /* Add space between button and tooltip */
+}
+
+/* Tooltip for Notification Button */
+.notification-button + .custom-tooltip {
+  top: 100%; /* Position directly below the button */
+  left: 90%;   /* Align to the left edge of the button */
+  margin-top: 5px; /* Add space between button and tooltip */
+}

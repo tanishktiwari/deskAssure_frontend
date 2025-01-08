@@ -6,10 +6,11 @@ const AssignTicketModal = ({ isOpen, onClose, ticket }) => {
   const [users, setUsers] = useState([]);
   const [ticketMobile, setTicketMobile] = useState('');
 
+  // Fetching the list of engineers and ticket's mobile number
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5174/engineers/names-and-mobile');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/engineers/names-and-mobile`);
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -19,7 +20,7 @@ const AssignTicketModal = ({ isOpen, onClose, ticket }) => {
     const fetchMobileNumber = async () => {
       if (ticket) {
         try {
-          const response = await axios.get(`http://localhost:5174/ticket-details/${ticket.ticketNo}`);
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/ticket-details/${ticket.ticketNo}`);
           console.log(`Mobile number for ticket ${ticket.ticketNo}:`, response.data.contactNumber);
           setTicketMobile(response.data.contactNumber);
         } catch (error) {
@@ -34,55 +35,55 @@ const AssignTicketModal = ({ isOpen, onClose, ticket }) => {
     }
   }, [isOpen, ticket]);
 
+  // Handle user selection
   const handleAssignChange = (e) => {
     setAssignedUser(e.target.value);
   };
 
- const handleAssignSubmit = async () => {
-  if (!assignedUser) {
-    alert('Please select an engineer to assign the ticket.');
-    return;
-  }
+  // Submit the form with the correct data
+  const handleAssignSubmit = async () => {
+    if (!assignedUser) {
+      alert('Please select an engineer to assign the ticket.');
+      return;
+    }
 
-  const selectedUser = users.find(user => user.name === assignedUser);
-  
-  if (!selectedUser) {
-    console.error('Selected user not found.');
-    return;
-  }
+    const selectedUser = users.find(user => user.name === assignedUser);
+    if (!selectedUser) {
+      console.error('Selected user not found.');
+      return;
+    }
 
-  // Prepend +91 to the ticket's mobile number for sending the message
-  const mobileToSendMessage = `+91${ticketMobile}`;
+    // Prepend +91 to the ticket's mobile number for sending the message
+    const mobileToSendMessage = `+91${ticketMobile.replace(/^(\+91)?/, '')}`;
 
-  const messageData = {
-    to: mobileToSendMessage, // Send to the ticket's mobile number with +91
-    name: ticket.name, // Use ticket.name instead of assignedUser
-    ticketId: ticket.ticketNo,
-    engineerName: selectedUser.name, // Use selectedUser's name
-    engineerMobile: `+91${selectedUser.mobile}`, // Include engineer's mobile with +91
-    username: ticket.username, // Keep the username in case it's needed
+    // Ensure the data is being sent correctly without 'eta'
+    const messageData = {
+      to: mobileToSendMessage, // Send to the ticket's mobile number with +91
+      sal: "Mr.", // Salutation, you can customize this based on your logic
+      name: ticket.name, // The name from the ticket, not the assigned user
+      ticketId: ticket.ticketNo, // The ticket ID
+      engineerName: selectedUser.name, // Engineer name
+      engineerMobile: `+91${selectedUser.mobile.replace(/^(\+91)?/, '')}`, // Engineer's mobile with +91
+    };
+
+    // Log the data before sending to check for errors
+    console.log('Sending the following data:', messageData);
+
+    try {
+      // Make the POST request to the backend API
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/send-whatsapp-inprogress`, messageData);
+      console.log(`Ticket ${ticket.ticketNo} assigned to ${assignedUser}`);
+      console.log(`Engineer Name: ${selectedUser.name}, Mobile: +91${selectedUser.mobile}`);
+      console.log('In-progress WhatsApp message sent:', response.data);
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error.response ? error.response.data : error.message);
+    }
+
+    // Close the modal after submitting
+    onClose();
   };
 
-  // Log the number to which the message is being sent
-  console.log(`Sending message to: ${mobileToSendMessage}`);
-
-  try {
-    const response = await axios.post('http://localhost:5174/send-inprogress-whatsapp-message', messageData);
-    console.log(`Ticket ${ticket.ticketNo} assigned to ${assignedUser}`);
-    console.log(`Engineer Name: ${selectedUser.name}, Mobile: +91${selectedUser.mobile}`);
-    console.log('In-progress WhatsApp message sent:', response.data);
-  } catch (error) {
-    console.error('Error sending WhatsApp message:', error.response ? error.response.data : error.message);
-  }
-
-  onClose();
-};
-
-
-
-
-
-
+  // Don't show the modal if it's not open
   if (!isOpen) return null;
 
   return (
@@ -98,7 +99,7 @@ const AssignTicketModal = ({ isOpen, onClose, ticket }) => {
             <p><strong>Mobile Number:</strong> {ticketMobile}</p>
           </div>
         )}
-        
+
         <table className="min-w-full mt-4">
           <thead>
             <tr>

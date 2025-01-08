@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import "../Operator/Operator.css";
 
 const Operator = () => {
@@ -16,13 +16,15 @@ const Operator = () => {
   const [editingOperatorId, setEditingOperatorId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchVisible, setSearchVisible] = useState(false); // Added this line
   const itemsPerPage = 10;
+  const companyCount = localStorage.getItem("totalCompanyCount") || "0";
 
   // Fetch all operators and companies on component mount
   useEffect(() => {
     const fetchOperators = async () => {
       try {
-        const response = await fetch("http://localhost:5174/operators");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/operators`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -35,7 +37,7 @@ const Operator = () => {
 
     const fetchCompanies = async () => {
       try {
-        const response = await fetch("http://localhost:5174/companies");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/companies`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -122,8 +124,8 @@ const Operator = () => {
     try {
       const method = editingOperatorId ? "PUT" : "POST";
       const url = editingOperatorId
-        ? `http://localhost:5174/operators/${editingOperatorId}`
-        : "http://localhost:5174/operators";
+        ? `${import.meta.env.VITE_API_URL}/operators/${editingOperatorId}`
+        : `${import.meta.env.VITE_API_URL}/operators`;
 
       const response = await fetch(url, {
         method,
@@ -146,6 +148,7 @@ const Operator = () => {
       }
 
       const result = await response.json();
+
       if (editingOperatorId) {
         setOperators(
           operators.map((operator) =>
@@ -154,6 +157,9 @@ const Operator = () => {
         );
       } else {
         setOperators([...operators, result]);
+
+        // Send email to the new operator
+        await sendNewUserEmail(email, operatorName);
       }
 
       setShowPopup(false);
@@ -166,6 +172,32 @@ const Operator = () => {
       setTitle("");
     } catch (error) {
       console.error("Error adding or updating operator:", error);
+    }
+  };
+
+  // Function to send the new user email
+  const sendNewUserEmail = async (recipientEmail, firstName) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/send-new-user-mail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipientEmail,
+          firstName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error sending email");
+      }
+
+      await response.json();
+      alert("New user email sent successfully.");
+    } catch (error) {
+      console.error("Error sending new user email:", error);
+      alert("Failed to send email.");
     }
   };
 
@@ -184,7 +216,7 @@ const Operator = () => {
   const handleDeleteClick = async (id) => {
     if (window.confirm("Are you sure you want to delete this operator?")) {
       try {
-        const response = await fetch(`http://localhost:5174/operators/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/operators/${id}`, {
           method: "DELETE",
         });
 
@@ -219,200 +251,256 @@ const Operator = () => {
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(filteredOperators.length / itemsPerPage);
+  const totalEntries = filteredOperators.length; // Move this here
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalEntries);
+  // const paginatedOperators = filteredOperators.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // );
+  const totalPages = Math.ceil(totalEntries / itemsPerPage);
 
   return (
-    <div className="operator-container">
-      <div className="header-container">
-        <h2>Ticket Owner Details</h2>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-box"
+    <div className="max-w-6xl mx-auto p-4 ml-[12%] mt-14">
+      {/* Statistics section */}
+      <div className="flex justify-between items-center bg-white p-6 shadow-md rounded-md mb-6">
+        <div className="flex items-center">
+          <img
+            src="/Group_10.png"
+            alt="Operator Icon"
+            className="mr-4 h-16 w-16"
           />
-          <button className="add-button" onClick={handleAddClick}>
-            ADD TICKET OWNER
-          </button>
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-green-600">
+              {totalEntries}
+            </div>
+            <div className="text-gray-500">Total Operators</div>
+          </div>
+        </div>
+
+        <div className="flex items-center">
+          <img
+            src="/Group_11.png"
+            alt="Company Icon"
+            className="mr-4 h-16 w-16"
+          />
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-gray-800">
+              {companyCount}
+            </div>
+            <div className="text-gray-500">Companies</div>
+            <div className="text-sm text-red-500">↓ 1% this month</div>
+          </div>
+        </div>
+
+        <div className="flex items-center">
+          <img
+            src="/Group_12.png"
+            alt="Ticket Icon"
+            className="mr-4 h-16 w-16"
+          />
+          <div className="flex flex-col items-start">
+            <div className="text-4xl font-semibold text-green-600">189</div>
+            <div className="text-gray-500">Active Tickets</div>
+          </div>
         </div>
       </div>
 
-      {showPopup && (
-        <div className="popup-overlay-operator">
-          <div className="popup-container-operator">
-            <div className="popup-header-operator">
-              <h3>
-                {editingOperatorId
-                  ? "Edit Ticket Owner"
-                  : "Create Ticket Owner"}
-              </h3>
-            </div>
-            <div className="popup-body-operator">
-              <div className="operator-title-name">
-                <label htmlFor="title-box">Title</label>
-                <input
-                  id="title-box"
-                  type="text"
-                  placeholder="Enter title"
-                  value={title}
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="operator-name">
-                  Operator Name<span className="required-star">*</span>
-                </label>
-                <input
-                  id="operator-name"
-                  type="text"
-                  placeholder="Enter operator name"
-                  value={operatorName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="operator-title-name">
-                <label htmlFor="email">
-                  Email<span className="required-star">*</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="mobile">Mobile</label>
-                <input
-                  id="mobile"
-                  type="text"
-                  placeholder="Enter mobile number"
-                  value={mobile}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="operator-title-name">
-                <label htmlFor="contract-type">Contract Type</label>
-                <input
-                  id="contract-type"
-                  type="text"
-                  placeholder="Enter contract type"
-                  value={contractType}
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="manager-name">Manager Name</label>
-                <input
-                  id="manager-name"
-                  type="text"
-                  placeholder="Enter manager name"
-                  value={managerName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="operator-title-name">
-                <label htmlFor="company-name">
-                  Company Name<span className="required-star">*</span>
-                </label>
-                <select
-                  id="company-name"
-                  value={companyName}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select a company</option>
-                  {companies.map((company) => (
-                    <option key={company._id} value={company.name}>
-                      {company.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="popup-footer-operator">
-              <button className="cancel-button" onClick={handleClosePopup}>
-                Cancel
+      {/* Table */}
+      <div className="bg-white p-6 shadow-md rounded-md">
+        {/* Header and Search */}
+        <div className="bg-white p-6 shadow-md rounded-md mb-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Ticket Owner Details</h2>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSearchVisible(!searchVisible)}
+                className="relative"
+              >
+                <img src="/search.png" alt="Search" className="w-6 h-6" />
               </button>
-              <button className="submit-button" onClick={handleSubmit}>
-                {editingOperatorId ? "Update" : "Submit"}
+              {searchVisible && (
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="border rounded-md py-2 px-4"
+                />
+              )}
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleAddClick}
+              >
+                ADD TICKET OWNER
               </button>
             </div>
           </div>
-        </div>
-      )}
 
-      <table className="details-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Operator Name</th>
-            <th>Email</th>
-            <th>Company Name</th>
-            <th>Mobile</th>
-            <th>Contract Type</th>
-            <th>Manager Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedOperators.map((operator) => (
-            <React.Fragment key={operator._id}>
-              <tr>
-                <td>{operator.title}</td>
-                <td>{operator.operatorName}</td>
-                <td>{operator.email}</td>
-                <td>{operator.companyName}</td>
-                <td>{operator.mobile}</td>
-                <td>{operator.contractType}</td>
-                <td>{operator.managerName}</td>
-                <td>
+          {showPopup && (
+            <div className="popup-overlay-operator">
+              <div className="popup-container-operator">
+                <div className="popup-header-operator">
+                  <h3>
+                    {editingOperatorId
+                      ? "Edit Ticket Owner"
+                      : "Create Ticket Owner"}
+                  </h3>
+                </div>
+                <div className="popup-body-operator">
+                  <div className="operator-title-name">
+                    <label htmlFor="title-box">Title</label>
+                    <input
+                      id="title-box"
+                      type="text"
+                      placeholder="Enter title"
+                      value={title}
+                      onChange={handleInputChange}
+                    />
+                    <label htmlFor="operator-name">
+                      Operator Name<span className="required-star">*</span>
+                    </label>
+                    <input
+                      id="operator-name"
+                      type="text"
+                      placeholder="Enter operator name"
+                      value={operatorName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="operator-title-name">
+                    <label htmlFor="email">
+                      Email<span className="required-star">*</span>
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="Enter email"
+                      value={email}
+                      onChange={handleInputChange}
+                    />
+                    <label htmlFor="mobile">Mobile</label>
+                    <input
+                      id="mobile"
+                      type="text"
+                      placeholder="Enter mobile number"
+                      value={mobile}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="operator-title-name">
+                    <label htmlFor="contract-type">Contract Type</label>
+                    <input
+                      id="contract-type"
+                      type="text"
+                      placeholder="Enter contract type"
+                      value={contractType}
+                      onChange={handleInputChange}
+                    />
+                    <label htmlFor="manager-name">Manager Name</label>
+                    <input
+                      id="manager-name"
+                      type="text"
+                      placeholder="Enter manager name"
+                      value={managerName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="operator-title-name">
+                    <label htmlFor="company-name">
+                      Company Name<span className="required-star">*</span>
+                    </label>
+                    <select
+                      id="company-name"
+                      value={companyName}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select a company</option>
+                      {companies.map((company) => (
+                        <option key={company._id} value={company.name}>
+                          {company.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="popup-footer-operator">
+                  <button className="cancel-button" onClick={handleClosePopup}>
+                    Cancel
+                  </button>
+                  <button className="submit-button" onClick={handleSubmit}>
+                    {editingOperatorId ? "Update" : "Submit"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="border-b-2 p-4 text-left">Operator Name</th>
+              <th className="border-b-2 p-4 text-left">Email</th>
+              <th className="border-b-2 p-4 text-left">Company Name</th>
+              <th className="border-b-2 p-4 text-left">Mobile</th>
+              <th className="border-b-2 p-4 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedOperators.map((operator) => (
+              <tr key={operator._id}>
+                <td className="border-b p-4">{operator.operatorName}</td>
+                <td className="border-b p-4">{operator.email}</td>
+                <td className="border-b p-4">{operator.companyName}</td>
+                <td className="border-b p-4">{operator.mobile}</td>
+                <td className="border-b p-4">
                   <button
-                    className="action-button"
                     onClick={() => handleEditClick(operator)}
+                    className="mr-2 text-blue-500 hover:text-blue-700"
                   >
                     <FaEdit />
                   </button>
                   <button
-                    className="action-button"
                     onClick={() => handleDeleteClick(operator._id)}
+                    className="text-red-500 hover:text-red-700"
                   >
                     <FaTrash />
                   </button>
                 </td>
               </tr>
-              <tr className="row-divider"></tr>
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <div className="table-footer">
-        <span className="showing-text">
-          Showing {paginatedOperators.length} of {filteredOperators.length}{" "}
-          entries
-        </span>
-        <div className="pagination-controls">
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-6">
+        <div>
+          Showing data {startIndex} to {endIndex} of {totalEntries} entries
+        </div>
+        <div className="flex items-center space-x-2">
           <button
-            className="pagination-button"
+            className="px-4 py-2 border rounded-md"
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            Previous
+            &lt;
           </button>
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              className={`pagination-button ${
-                index + 1 === currentPage ? "active" : ""
-              }`}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
+
           <button
-            className="pagination-button"
+            className="px-4 py-2 text-white rounded-md"
+            style={{ backgroundColor: "#5932EA" }}
+          >
+            {currentPage}
+          </button>
+
+          <button
+            className="px-4 py-2 border rounded-md"
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            Next
+            &gt;
           </button>
         </div>
       </div>
